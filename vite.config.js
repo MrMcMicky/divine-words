@@ -6,5 +6,10 @@ export default defineConfig({
   server: {
     port: 8016,
     host: true
+  },
+  preview: {
+    port: 8016,
+    host: true,
+    allowedHosts: ['divine-words.assistent.my.id', 'localhost']
   }
 })

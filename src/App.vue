@@ -127,7 +127,7 @@
               <BookOpenIcon class="w-5 h-5" />
               {{ loading ? translations[currentLang].loading : translations[currentLang].search }}
             </button>
-            <button @click="showDailyVerse = true" class="romantic-button flex-1">
+            <button @click="showDailyVerse = true; if (!dailyVerseData) loadDailyVerse()" class="romantic-button flex-1">
               {{ translations[currentLang].showDaily }}
             </button>
           </div>
@@ -360,6 +360,10 @@ const loadDailyVerse = async () => {
   const dailyRef = getDailyVerse()
   const reference = `${dailyRef.book}+${dailyRef.chapter}:${dailyRef.verse}`
   
+  // Show loading state
+  loading.value = true
+  error.value = ''
+  
   try {
     // Load German version
     const deResponse = await axios.get(`https://bible-api.com/${reference}?translation=elberfelder1905`)
@@ -378,6 +382,19 @@ const loadDailyVerse = async () => {
     }
   } catch (err) {
     console.error('Error loading daily verse:', err)
+    // Fallback to a default verse if API fails
+    dailyVerseData.value = {
+      de: {
+        text: 'Denn ich weiß, was für Gedanken ich über euch habe, spricht Jehova, Gedanken des Friedens und nicht zum Unglück, um euch Ausgang und Hoffnung zu gewähren.',
+        reference: 'Jeremia 29:11'
+      },
+      en: {
+        text: 'For I know the thoughts that I think toward you, says the LORD, thoughts of peace and not of evil, to give you a future and a hope.',
+        reference: 'Jeremiah 29:11'
+      }
+    }
+  } finally {
+    loading.value = false
   }
 }
 

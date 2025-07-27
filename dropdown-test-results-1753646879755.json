@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-07-27T20:07:57.560Z",
+  "url": "https://divine-words.assistent.my.id",
+  "tests": {
+    "dropdownNavigation": {
+      "bookDropdown": {},
+      "chapterDropdown": {},
+      "verseDropdown": {},
+      "verseRanges": {},
+      "search": {},
+      "languageSwitch": {}
+    },
+    "uiUx": {
+      "styling": {},
+      "disabledStates": {},
+      "responsiveness": {}
+    },
+    "errorHandling": {},
+    "performance": {}
+  },
+  "screenshots": [],
+  "summary": {
+    "totalTests": 0,
+    "passed": 0,
+    "failed": 0
+  },
+  "error": "page.waitForTimeout is not a function"
+}

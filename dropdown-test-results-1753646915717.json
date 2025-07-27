@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-07-27T20:08:31.453Z",
+  "url": "https://divine-words.assistent.my.id",
+  "tests": {
+    "dropdownNavigation": {
+      "bookDropdown": {},
+      "chapterDropdown": {},
+      "verseDropdown": {},
+      "verseRanges": {},
+      "search": {},
+      "languageSwitch": {}
+    },
+    "uiUx": {
+      "styling": {},
+      "disabledStates": {},
+      "responsiveness": {}
+    },
+    "errorHandling": {},
+    "performance": {}
+  },
+  "screenshots": [
+    "./dropdown-test-screenshots/initial-state-1753646915373.png"
+  ],
+  "summary": {
+    "totalTests": 0,
+    "passed": 0,
+    "failed": 0
+  },
+  "error": "SyntaxError: Failed to execute 'querySelector' on 'Document': 'button:has-text(\"Verse suchen\"), button:has-text(\"Search Verses\")' is not a valid selector."
+}

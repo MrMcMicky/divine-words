@@ -1,0 +1,104 @@
+{
+  "timestamp": "2025-07-27T20:10:06.436Z",
+  "url": "https://divine-words.assistent.my.id",
+  "tests": [
+    {
+      "name": "Switch to Search Mode",
+      "status": "PASSED"
+    },
+    {
+      "name": "Dropdown Existence",
+      "status": "PASSED",
+      "details": {
+        "count": 4,
+        "translationDropdown": true,
+        "bookDropdown": true,
+        "chapterDropdown": true,
+        "verseDropdown": true
+      }
+    },
+    {
+      "name": "Book Dropdown Functionality",
+      "status": "PASSED",
+      "details": {
+        "bookCount": 66,
+        "sampleBooks": [
+          "1. Mose",
+          "2. Mose",
+          "3. Mose",
+          "4. Mose",
+          "5. Mose"
+        ],
+        "selectedBook": "Johannes"
+      }
+    },
+    {
+      "name": "Chapter Dropdown Functionality",
+      "status": "PASSED",
+      "details": {
+        "wasDisabled": false,
+        "isEnabled": true,
+        "chapterCount": 21,
+        "selectedChapter": "3"
+      }
+    },
+    {
+      "name": "Verse Dropdown Functionality",
+      "status": "FAILED",
+      "details": {
+        "wasDisabled": false,
+        "isEnabled": true,
+        "totalOptions": 42,
+        "verseCount": 0,
+        "rangeCount": 5,
+        "hasRanges": true,
+        "selectedVerse": "16"
+      }
+    },
+    {
+      "name": "Search Functionality",
+      "status": "FAILED",
+      "details": {
+        "found": false,
+        "text": "...",
+        "reference": "Schöne Bibelverse für die Seele"
+      }
+    },
+    {
+      "name": "Language Switch",
+      "status": "FAILED",
+      "details": {
+        "bookValue": "42",
+        "chapterValue": "3",
+        "verseValue": "16",
+        "bookPlaceholder": "Bitte wählen Sie ein Buch",
+        "uiLanguage": "German"
+      }
+    },
+    {
+      "name": "Mobile Responsiveness",
+      "status": "PASSED",
+      "details": {
+        "containerClass": "grid grid-cols-1 md:grid-cols-3 gap-4 mb-6",
+        "isStacked": true,
+        "containerWidth": 277,
+        "selectWidth": 277,
+        "fitsScreen": true
+      }
+    },
+    {
+      "name": "Error Handling",
+      "status": "WARNING",
+      "details": {
+        "found": false,
+        "message": "No error message found"
+      }
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 5,
+    "failed": 3,
+    "warnings": 1
+  }
+}

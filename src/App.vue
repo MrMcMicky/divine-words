@@ -88,34 +88,58 @@
             </select>
           </div>
 
-          <!-- Bible Reference Input -->
+          <!-- Bible Reference Dropdowns -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
               <label class="block text-romantic-rose font-medium mb-2">
                 {{ translations[currentLang].book }}
               </label>
-              <input v-model="book" 
-                     type="text" 
-                     :placeholder="translations[currentLang].bookPlaceholder"
-                     class="w-full px-4 py-3 rounded-lg border border-romantic-pink/30 focus:border-romantic-rose focus:outline-none">
+              <select v-model="selectedBookIndex" 
+                      class="w-full px-4 py-3 rounded-lg border border-romantic-pink/30 focus:border-romantic-rose focus:outline-none">
+                <option :value="null" disabled>{{ translations[currentLang].selectBook }}</option>
+                <option v-for="(book, index) in books" 
+                        :key="index" 
+                        :value="index">
+                  {{ book.name }}
+                </option>
+              </select>
             </div>
             <div>
               <label class="block text-romantic-rose font-medium mb-2">
                 {{ translations[currentLang].chapter }}
               </label>
-              <input v-model="chapter" 
-                     type="number" 
-                     min="1"
-                     class="w-full px-4 py-3 rounded-lg border border-romantic-pink/30 focus:border-romantic-rose focus:outline-none">
+              <select v-model="selectedChapter" 
+                      :disabled="!selectedBook"
+                      class="w-full px-4 py-3 rounded-lg border border-romantic-pink/30 focus:border-romantic-rose focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed">
+                <option :value="null" disabled>{{ translations[currentLang].selectChapter }}</option>
+                <option v-for="chapter in chapters" 
+                        :key="chapter" 
+                        :value="chapter">
+                  {{ chapter }}
+                </option>
+              </select>
             </div>
             <div>
               <label class="block text-romantic-rose font-medium mb-2">
                 {{ translations[currentLang].verse }}
               </label>
-              <input v-model="verse" 
-                     type="text" 
-                     placeholder="1 or 1-5"
-                     class="w-full px-4 py-3 rounded-lg border border-romantic-pink/30 focus:border-romantic-rose focus:outline-none">
+              <select v-model="selectedVerse" 
+                      :disabled="!selectedChapter"
+                      class="w-full px-4 py-3 rounded-lg border border-romantic-pink/30 focus:border-romantic-rose focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed">
+                <option value="">{{ translations[currentLang].selectVerse }}</option>
+                <option v-for="verse in verses" 
+                        :key="verse" 
+                        :value="verse">
+                  {{ verse }}
+                </option>
+                <optgroup v-if="verses.length > 1" label="Verse ranges">
+                  <option v-for="i in Math.min(5, verses.length - 1)" 
+                          :key="'range-' + i" 
+                          :value="`1-${i + 1}`">
+                    1-{{ i + 1 }}
+                  </option>
+                </optgroup>
+              </select>
             </div>
           </div>
 
@@ -160,22 +184,32 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { HeartIcon, BookOpenIcon } from '@heroicons/vue/24/solid'
 import axios from 'axios'
 import dayjs from 'dayjs'
-import dayOfYear from 'dayjs/plugin/dayOfYear'
-
-// Enable dayOfYear plugin
-dayjs.extend(dayOfYear)
+import { bibleBooks } from './bibleData'
 
 // State
 const currentLang = ref('de')
 const selectedTranslation = ref('web')
-const book = ref('')
-const chapter = ref('')
-const verse = ref('')
+const selectedBookIndex = ref(null)
+const selectedChapter = ref(null)
+const selectedVerse = ref('')
 const loading = ref(false)
 const error = ref('')
 const verseData = ref(null)
 const showDailyVerse = ref(true)
 const dailyVerseData = ref(null)
+
+// Computed properties
+const books = computed(() => bibleBooks[currentLang.value])
+const selectedBook = computed(() => selectedBookIndex.value !== null ? books.value[selectedBookIndex.value] : null)
+const chapters = computed(() => {
+  if (!selectedBook.value) return []
+  return Array.from({ length: selectedBook.value.chapters }, (_, i) => i + 1)
+})
+const verses = computed(() => {
+  if (!selectedBook.value || !selectedChapter.value) return []
+  const verseCount = selectedBook.value.verses[selectedChapter.value - 1]
+  return Array.from({ length: verseCount }, (_, i) => i + 1)
+})
 
 // Available translations
 const availableTranslations = {
@@ -199,7 +233,10 @@ const translations = {
     searchTitle: 'Bibelvers suchen',
     selectTranslation: 'Übersetzung wählen',
     book: 'Buch',
-    bookPlaceholder: 'z.B. Johannes',
+    bookPlaceholder: 'Buch wählen',
+    selectBook: 'Bitte wählen Sie ein Buch',
+    selectChapter: 'Bitte wählen Sie ein Kapitel',
+    selectVerse: 'Verse wählen (optional)',
     chapter: 'Kapitel',
     verse: 'Vers(e)',
     search: 'Suchen',
@@ -214,7 +251,10 @@ const translations = {
     searchTitle: 'Search Bible Verse',
     selectTranslation: 'Select Translation',
     book: 'Book',
-    bookPlaceholder: 'e.g. John',
+    bookPlaceholder: 'Select a book',
+    selectBook: 'Please select a book',
+    selectChapter: 'Please select a chapter',
+    selectVerse: 'Select verse(s) (optional)',
     chapter: 'Chapter',
     verse: 'Verse(s)',
     search: 'Search',
@@ -228,6 +268,21 @@ const translations = {
 // Watch language change to update translation
 watch(currentLang, (newLang) => {
   selectedTranslation.value = availableTranslations[newLang][0].code
+  // Reset selections when language changes
+  selectedBookIndex.value = null
+  selectedChapter.value = null
+  selectedVerse.value = ''
+})
+
+// Reset chapter and verse when book changes
+watch(selectedBookIndex, () => {
+  selectedChapter.value = null
+  selectedVerse.value = ''
+})
+
+// Reset verse when chapter changes
+watch(selectedChapter, () => {
+  selectedVerse.value = ''
 })
 
 // Encouraging verses list (curated for daily display)
@@ -333,10 +388,10 @@ const getDailyVerse = () => {
 
 // Search for a verse
 const searchVerse = async () => {
-  if (!book.value || !chapter.value) {
+  if (selectedBookIndex.value === null || !selectedChapter.value) {
     error.value = currentLang.value === 'de' 
-      ? 'Bitte Buch und Kapitel eingeben' 
-      : 'Please enter book and chapter'
+      ? 'Bitte Buch und Kapitel wählen' 
+      : 'Please select book and chapter'
     return
   }
 
@@ -345,14 +400,25 @@ const searchVerse = async () => {
   verseData.value = null
 
   try {
-    const reference = `${book.value}+${chapter.value}${verse.value ? ':' + verse.value : ''}`
+    // Always use English book names for the API
+    const bookName = selectedBook.value.englishName || selectedBook.value.name
+    
+    // Replace spaces with + for the API
+    const formattedBookName = bookName.replace(/\s+/g, '+')
+    const reference = `${formattedBookName}+${selectedChapter.value}${selectedVerse.value ? ':' + selectedVerse.value : ''}`
+    
+    console.log('Searching for:', reference, 'Translation:', selectedTranslation.value)
+    
     const response = await axios.get(`/api/bible/${reference}?translation=${selectedTranslation.value}`)
+    
+    console.log('API Response:', response.data)
     
     verseData.value = {
       text: response.data.text.trim(),
       reference: response.data.reference
     }
   } catch (err) {
+    console.error('Search error:', err)
     error.value = translations[currentLang.value].error
   } finally {
     loading.value = false
@@ -362,7 +428,8 @@ const searchVerse = async () => {
 // Load daily verse
 const loadDailyVerse = async () => {
   const dailyRef = getDailyVerse()
-  const reference = `${dailyRef.book}+${dailyRef.chapter}:${dailyRef.verse}`
+  const formattedBook = dailyRef.book.replace(/\s+/g, '+')
+  const reference = `${formattedBook}+${dailyRef.chapter}:${dailyRef.verse}`
   
   // Show loading state
   loading.value = true

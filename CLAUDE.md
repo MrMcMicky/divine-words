@@ -77,3 +77,9 @@ tail -f service.log
 
 ## Updates & Fixes
 - 2025-01-27: Initial creation with all requested features
+- 2025-01-27: Expanded daily verse list from 10 to 80+ verses
+- 2025-01-27: Fixed Vite configuration for production domain
+- 2025-01-27: Implemented Express server to solve CORS issues
+- 2025-01-27: Replaced text inputs with dropdown navigation
+- 2025-01-27: Fixed API integration with proper book name formatting
+- 2025-01-27: Made daily verse always visible (removed toggle functionality)

@@ -34,41 +34,41 @@
         </button>
       </div>
 
-      <!-- Main Content Card -->
+      <!-- Daily Verse Card -->
       <div class="romantic-card mb-8">
-        <!-- Daily Verse Section -->
-        <div v-if="showDailyVerse" class="mb-8">
-          <h2 class="text-3xl font-script text-romantic-deepRose text-center mb-6">
-            {{ translations[currentLang].dailyVerse }}
-          </h2>
-          
-          <!-- Daily Verse Display -->
-          <div v-if="dailyVerseData" class="space-y-6">
-            <div class="text-center">
-              <p class="verse-text mb-3">{{ dailyVerseData[currentLang].text }}</p>
-              <p class="text-lg text-romantic-rose font-medium">
-                {{ dailyVerseData[currentLang].reference }}
-              </p>
-            </div>
-            
-            <!-- Show both languages for daily verse -->
-            <div class="border-t border-romantic-pink/20 pt-6">
-              <p class="text-sm text-gray-600 text-center mb-3">
-                {{ currentLang === 'de' ? 'English Version:' : 'Deutsche Version:' }}
-              </p>
-              <p class="text-lg text-gray-700 italic text-center">
-                {{ dailyVerseData[currentLang === 'de' ? 'en' : 'de'].text }}
-              </p>
-            </div>
+        <h2 class="text-3xl font-script text-romantic-deepRose text-center mb-6">
+          {{ translations[currentLang].dailyVerse }}
+        </h2>
+        
+        <!-- Daily Verse Display -->
+        <div v-if="dailyVerseData" class="space-y-6">
+          <div class="text-center">
+            <p class="verse-text mb-3">{{ dailyVerseData[currentLang].text }}</p>
+            <p class="text-lg text-romantic-rose font-medium">
+              {{ dailyVerseData[currentLang].reference }}
+            </p>
           </div>
           
-          <button @click="showDailyVerse = false" class="romantic-button w-full mt-6">
-            {{ translations[currentLang].searchVerses }}
-          </button>
+          <!-- Show both languages for daily verse -->
+          <div class="border-t border-romantic-pink/20 pt-6">
+            <p class="text-sm text-gray-600 text-center mb-3">
+              {{ currentLang === 'de' ? 'English Version:' : 'Deutsche Version:' }}
+            </p>
+            <p class="text-lg text-gray-700 italic text-center">
+              {{ dailyVerseData[currentLang === 'de' ? 'en' : 'de'].text }}
+            </p>
+          </div>
         </div>
+        
+        <!-- Loading state for daily verse -->
+        <div v-else-if="loadingDaily" class="text-center py-8">
+          <p class="text-romantic-rose animate-pulse">{{ translations[currentLang].loading }}</p>
+        </div>
+      </div>
 
-        <!-- Verse Search Section -->
-        <div v-else>
+      <!-- Verse Search Card -->
+      <div class="romantic-card mb-8">
+        <div>
           <h2 class="text-3xl font-script text-romantic-deepRose text-center mb-6">
             {{ translations[currentLang].searchTitle }}
           </h2>
@@ -143,16 +143,13 @@
             </div>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="flex flex-col sm:flex-row gap-4">
+          <!-- Search Button -->
+          <div class="flex justify-center">
             <button @click="searchVerse" 
                     :disabled="loading"
-                    class="romantic-button flex-1 flex items-center justify-center gap-2">
+                    class="romantic-button flex items-center justify-center gap-2 px-8">
               <BookOpenIcon class="w-5 h-5" />
               {{ loading ? translations[currentLang].loading : translations[currentLang].search }}
-            </button>
-            <button @click="showDailyVerse = true; if (!dailyVerseData) loadDailyVerse()" class="romantic-button flex-1">
-              {{ translations[currentLang].showDaily }}
             </button>
           </div>
 
@@ -184,7 +181,11 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { HeartIcon, BookOpenIcon } from '@heroicons/vue/24/solid'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import dayOfYear from 'dayjs/plugin/dayOfYear'
 import { bibleBooks } from './bibleData'
+
+// Extend dayjs with dayOfYear plugin
+dayjs.extend(dayOfYear)
 
 // State
 const currentLang = ref('de')
@@ -195,8 +196,8 @@ const selectedVerse = ref('')
 const loading = ref(false)
 const error = ref('')
 const verseData = ref(null)
-const showDailyVerse = ref(true)
 const dailyVerseData = ref(null)
+const loadingDaily = ref(false)
 
 // Computed properties
 const books = computed(() => bibleBooks[currentLang.value])
@@ -432,8 +433,7 @@ const loadDailyVerse = async () => {
   const reference = `${formattedBook}+${dailyRef.chapter}:${dailyRef.verse}`
   
   // Show loading state
-  loading.value = true
-  error.value = ''
+  loadingDaily.value = true
   
   try {
     // Load German version (using WEB translation)
@@ -465,7 +465,7 @@ const loadDailyVerse = async () => {
       }
     }
   } finally {
-    loading.value = false
+    loadingDaily.value = false
   }
 }
 

@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom romantic styles */
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-romantic-lavender via-romantic-cream to-romantic-blush;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .romantic-card {
+    @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-romantic-pink/20;
+  }
+  
+  .romantic-button {
+    @apply px-6 py-3 bg-gradient-to-r from-romantic-rose to-romantic-deepRose text-white rounded-full 
+           font-medium transition-all duration-300 hover:shadow-lg hover:scale-105
+           active:scale-95 focus:outline-none focus:ring-4 focus:ring-romantic-pink/50;
+  }
+  
+  .verse-text {
+    @apply font-serif text-2xl leading-relaxed text-gray-800;
+  }
+}

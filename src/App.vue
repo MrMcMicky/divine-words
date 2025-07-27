@@ -237,13 +237,93 @@ const encouragingVerses = [
   { book: 'Matthew', chapter: 11, verse: '28-30' },
   { book: 'John', chapter: 3, verse: 16 },
   { book: '1 Corinthians', chapter: 13, verse: '4-7' },
-  { book: 'Psalm', chapter: 91, verse: '1-2' }
+  { book: 'Psalm', chapter: 91, verse: '1-2' },
+  { book: 'Joshua', chapter: 1, verse: 9 },
+  { book: 'Psalm', chapter: 46, verse: 1 },
+  { book: '2 Timothy', chapter: 1, verse: 7 },
+  { book: 'Isaiah', chapter: 40, verse: 31 },
+  { book: 'Deuteronomy', chapter: 31, verse: 6 },
+  { book: 'Psalm', chapter: 34, verse: '17-18' },
+  { book: 'Matthew', chapter: 6, verse: '33-34' },
+  { book: 'Hebrews', chapter: 11, verse: 1 },
+  { book: 'Psalm', chapter: 27, verse: 1 },
+  { book: '1 Peter', chapter: 5, verse: 7 },
+  { book: 'Psalm', chapter: 37, verse: '4-5' },
+  { book: 'Isaiah', chapter: 26, verse: 3 },
+  { book: 'Romans', chapter: 15, verse: 13 },
+  { book: 'Psalm', chapter: 121, verse: '1-2' },
+  { book: 'Ephesians', chapter: 3, verse: '20-21' },
+  { book: 'Psalm', chapter: 139, verse: '13-14' },
+  { book: 'Lamentations', chapter: 3, verse: '22-23' },
+  { book: 'Psalm', chapter: 103, verse: '1-5' },
+  { book: '2 Corinthians', chapter: 12, verse: 9 },
+  { book: 'Psalm', chapter: 16, verse: 11 },
+  { book: 'Colossians', chapter: 3, verse: '1-2' },
+  { book: 'Psalm', chapter: 118, verse: 24 },
+  { book: 'Galatians', chapter: 2, verse: 20 },
+  { book: 'Psalm', chapter: 19, verse: 14 },
+  { book: 'Philippians', chapter: 1, verse: 6 },
+  { book: 'Psalm', chapter: 84, verse: 11 },
+  { book: 'Isaiah', chapter: 43, verse: '1-2' },
+  { book: 'Psalm', chapter: 62, verse: '1-2' },
+  { book: 'John', chapter: 14, verse: 27 },
+  { book: 'Psalm', chapter: 100, verse: '4-5' },
+  { book: '1 John', chapter: 4, verse: '18-19' },
+  { book: 'Psalm', chapter: 145, verse: '18-19' },
+  { book: 'Romans', chapter: 12, verse: 12 },
+  { book: 'Psalm', chapter: 55, verse: 22 },
+  { book: 'James', chapter: 1, verse: 17 },
+  { book: 'Psalm', chapter: 40, verse: '1-3' },
+  { book: 'Hebrews', chapter: 13, verse: '5-6' },
+  { book: 'Psalm', chapter: 125, verse: '1-2' },
+  { book: '1 Thessalonians', chapter: 5, verse: '16-18' },
+  { book: 'Psalm', chapter: 73, verse: '25-26' },
+  { book: 'Nahum', chapter: 1, verse: 7 },
+  { book: 'Psalm', chapter: 31, verse: '23-24' },
+  { book: 'Ephesians', chapter: 2, verse: '8-9' },
+  { book: 'Psalm', chapter: 119, verse: 105 },
+  { book: '2 Corinthians', chapter: 4, verse: '16-18' },
+  { book: 'Psalm', chapter: 147, verse: 3 },
+  { book: 'Philippians', chapter: 4, verse: '6-7' },
+  { book: 'Psalm', chapter: 9, verse: '9-10' },
+  { book: 'Isaiah', chapter: 54, verse: 17 },
+  { book: 'Psalm', chapter: 18, verse: '1-2' },
+  { book: 'Romans', chapter: 8, verse: '38-39' },
+  { book: 'Psalm', chapter: 32, verse: 7 },
+  { book: 'John', chapter: 16, verse: 33 },
+  { book: 'Psalm', chapter: 138, verse: 8 },
+  { book: '1 Chronicles', chapter: 16, verse: 11 },
+  { book: 'Psalm', chapter: 94, verse: '18-19' },
+  { book: 'Zephaniah', chapter: 3, verse: 17 },
+  { book: 'Psalm', chapter: 5, verse: '11-12' },
+  { book: 'Matthew', chapter: 5, verse: 16 },
+  { book: 'Psalm', chapter: 42, verse: 11 },
+  { book: 'Isaiah', chapter: 58, verse: 11 },
+  { book: 'Psalm', chapter: 28, verse: 7 },
+  { book: '2 Corinthians', chapter: 5, verse: 17 },
+  { book: 'Psalm', chapter: 119, verse: '49-50' },
+  { book: 'Micah', chapter: 7, verse: 7 },
+  { book: 'Psalm', chapter: 71, verse: '5-6' },
+  { book: 'John', chapter: 10, verse: 10 },
+  { book: 'Psalm', chapter: 143, verse: 8 },
+  { book: 'Proverbs', chapter: 16, verse: 9 },
+  { book: 'Psalm', chapter: 33, verse: '20-22' },
+  { book: '1 John', chapter: 5, verse: '14-15' },
+  { book: 'Psalm', chapter: 86, verse: 5 }
 ]
 
-// Get daily verse based on date
+// Get daily verse based on date with more variety
 const getDailyVerse = () => {
-  const dayOfYear = dayjs().dayOfYear()
-  const index = dayOfYear % encouragingVerses.length
+  const date = dayjs()
+  const dayOfYear = date.dayOfYear()
+  const year = date.year()
+  
+  // Use a more sophisticated algorithm for better daily variety
+  // This ensures each day gets a unique verse and cycles through all verses
+  const totalVerses = encouragingVerses.length
+  const daysElapsed = Math.floor((date.valueOf() - new Date('2025-01-01').valueOf()) / (1000 * 60 * 60 * 24))
+  const index = daysElapsed % totalVerses
+  
   return encouragingVerses[index]
 }
 

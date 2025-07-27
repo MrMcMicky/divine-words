@@ -160,10 +160,14 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { HeartIcon, BookOpenIcon } from '@heroicons/vue/24/solid'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import dayOfYear from 'dayjs/plugin/dayOfYear'
+
+// Enable dayOfYear plugin
+dayjs.extend(dayOfYear)
 
 // State
 const currentLang = ref('de')
-const selectedTranslation = ref('elberfelder1905')
+const selectedTranslation = ref('web')
 const book = ref('')
 const chapter = ref('')
 const verse = ref('')
@@ -176,9 +180,9 @@ const dailyVerseData = ref(null)
 // Available translations
 const availableTranslations = {
   de: [
-    { code: 'elberfelder1905', name: 'Elberfelder 1905' },
-    { code: 'luther1912', name: 'Luther 1912' },
-    { code: 'schlachter', name: 'Schlachter 1951' }
+    { code: 'web', name: 'World English Bible' },
+    { code: 'kjv', name: 'King James Version' },
+    { code: 'asv', name: 'American Standard Version' }
   ],
   en: [
     { code: 'kjv', name: 'King James Version' },
@@ -342,7 +346,7 @@ const searchVerse = async () => {
 
   try {
     const reference = `${book.value}+${chapter.value}${verse.value ? ':' + verse.value : ''}`
-    const response = await axios.get(`https://bible-api.com/${reference}?translation=${selectedTranslation.value}`)
+    const response = await axios.get(`/api/bible/${reference}?translation=${selectedTranslation.value}`)
     
     verseData.value = {
       text: response.data.text.trim(),
@@ -365,10 +369,10 @@ const loadDailyVerse = async () => {
   error.value = ''
   
   try {
-    // Load German version
-    const deResponse = await axios.get(`https://bible-api.com/${reference}?translation=elberfelder1905`)
+    // Load German version (using WEB translation)
+    const deResponse = await axios.get(`/api/bible/${reference}?translation=web`)
     // Load English version
-    const enResponse = await axios.get(`https://bible-api.com/${reference}?translation=kjv`)
+    const enResponse = await axios.get(`/api/bible/${reference}?translation=kjv`)
     
     dailyVerseData.value = {
       de: {
